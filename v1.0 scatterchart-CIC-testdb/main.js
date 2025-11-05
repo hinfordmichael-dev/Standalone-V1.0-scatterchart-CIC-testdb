@@ -681,8 +681,24 @@ function drawChart() {
 
   // Update the comparison statement now that data is ready
   if (window.ChartRenderer && typeof window.ChartRenderer.updateComparisonStatement === 'function') {
-    const defaultStatement = "Ecodesign - Ready To Burn emit X times PM2.5 pollution than Gas Boilers. With Gas Boilers providing X times more heat.";
-    window.ChartRenderer.updateComparisonStatement(defaultStatement);
+    const dataPoints = window.supabaseModule.getScatterData(selectedYear, selectedPollutantId, selectedGroupIds);
+    if (dataPoints.length >= 2) {
+      const group1 = dataPoints[0];
+      const group2 = dataPoints[1];
+
+      const higherPolluter = group1.pollutantValue > group2.pollutantValue ? group1 : group2;
+      const lowerPolluter = group1.pollutantValue > group2.pollutantValue ? group2 : group1;
+
+      const pollutionRatio = lowerPolluter.pollutantValue !== 0 ? higherPolluter.pollutantValue / lowerPolluter.pollutantValue : Infinity;
+      const heatRatio = higherPolluter.activityData !== 0 ? lowerPolluter.activityData / higherPolluter.activityData : Infinity;
+
+      const pollutantName = window.supabaseModule.getPollutantName(selectedPollutantId);
+
+      const statement = `${higherPolluter.groupName} emits ${pollutionRatio.toFixed(1)} times more ${pollutantName} pollution than ${lowerPolluter.groupName}. ${lowerPolluter.groupName} provides ${heatRatio.toFixed(1)} times more heat.`;
+      window.ChartRenderer.updateComparisonStatement(statement);
+    } else {
+      window.ChartRenderer.updateComparisonStatement("Select two groups to see a comparison.");
+    }
   }
   
   // Update URL
