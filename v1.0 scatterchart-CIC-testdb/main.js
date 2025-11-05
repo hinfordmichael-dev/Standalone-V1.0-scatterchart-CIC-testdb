@@ -95,7 +95,7 @@ async function init() {
     console.log('Application initialized successfully');
   } catch (error) {
     console.error('Failed to initialize application:', error);
-    alert('Failed to load data. Please refresh the page.');
+    showNotification('Failed to load data. Please refresh the page.', 'error');
   }
 }
 
@@ -760,17 +760,37 @@ function updateComparisonStatement(statement) {
   const comparisonDiv = ensureComparisonDivExists();
   if (comparisonDiv) {
     comparisonDiv.textContent = statement;
-
-    // Apply pill styling
-    comparisonDiv.style.display = 'inline-block';
-    comparisonDiv.style.padding = '10px 20px';
-    comparisonDiv.style.borderRadius = '20px';
-    comparisonDiv.style.backgroundColor = 'orange';
-    comparisonDiv.style.color = 'white';
-    comparisonDiv.style.fontWeight = 'bold';
-    comparisonDiv.style.textAlign = 'center';
-    comparisonDiv.style.marginTop = '2px';
+    comparisonDiv.className = 'comparison-statement';
   }
+}
+
+/**
+ * Show a notification message
+ * @param {string} message - The message to display
+ * @param {string} type - The type of notification (e.g., 'error', 'success')
+ */
+function showNotification(message, type) {
+  const container = document.querySelector('.notification-container') || document.createElement('div');
+  if (!container.className) {
+    container.className = 'notification-container';
+    document.body.appendChild(container);
+  }
+
+  const notification = document.createElement('div');
+  notification.className = `notification ${type}`;
+  notification.textContent = message;
+
+  container.appendChild(notification);
+
+  setTimeout(() => {
+    notification.style.opacity = '0';
+    setTimeout(() => {
+      notification.remove();
+      if (!container.hasChildNodes()) {
+        container.remove();
+      }
+    }, 300);
+  }, 5000);
 }
 
 /**
