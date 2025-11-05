@@ -678,6 +678,12 @@ function drawChart() {
 
   // Draw chart
   window.ChartRenderer.drawScatterChart(selectedYear, selectedPollutantId, selectedGroupIds);
+
+  // Update the comparison statement now that data is ready
+  if (window.ChartRenderer && typeof window.ChartRenderer.updateComparisonStatement === 'function') {
+    const defaultStatement = "Ecodesign - Ready To Burn emit X times PM2.5 pollution than Gas Boilers. With Gas Boilers providing X times more heat.";
+    window.ChartRenderer.updateComparisonStatement(defaultStatement);
+  }
   
   // Update URL
   updateURL();
