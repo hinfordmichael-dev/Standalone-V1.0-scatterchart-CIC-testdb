@@ -303,46 +303,11 @@ function getChartInstance() {
   return chart;
 }
 
-function ensureComparisonDivExists() {
-  let comparisonDiv = document.getElementById('comparisonDiv');
-  if (!comparisonDiv) {
-    comparisonDiv = document.createElement('div');
-    comparisonDiv.id = 'comparisonDiv';
-    comparisonDiv.className = 'comparison-statement';
-
-    // Apply pill styling
-    comparisonDiv.style.display = 'inline-block';
-    comparisonDiv.style.padding = '10px 20px';
-    comparisonDiv.style.borderRadius = '20px';
-    comparisonDiv.style.backgroundColor = 'orange';
-    comparisonDiv.style.color = 'white';
-    comparisonDiv.style.fontWeight = 'bold';
-    comparisonDiv.style.textAlign = 'center';
-    comparisonDiv.style.marginTop = '10px';
-
-    const customLegend = document.getElementById('customLegend');
-    if (customLegend) {
-      customLegend.appendChild(comparisonDiv);
-    } else {
-      console.error('customLegend element not found. Cannot append comparisonDiv.');
-    }
-  }
-  return comparisonDiv;
-}
-
-function updateComparisonStatement(statement) {
-  const comparisonDiv = ensureComparisonDivExists();
-  if (comparisonDiv) {
-    comparisonDiv.textContent = statement;
-  }
-}
-
 // Export chart renderer functions
 window.ChartRenderer = {
   drawScatterChart,
   showMessage,
   clearMessage,
   getCurrentChartData,
-  getChartInstance,
-  updateComparisonStatement
+  getChartInstance
 };

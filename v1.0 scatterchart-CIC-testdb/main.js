@@ -680,29 +680,71 @@ function drawChart() {
   window.ChartRenderer.drawScatterChart(selectedYear, selectedPollutantId, selectedGroupIds);
 
   // Update the comparison statement now that data is ready
-  if (window.ChartRenderer && typeof window.ChartRenderer.updateComparisonStatement === 'function') {
-    const dataPoints = window.supabaseModule.getScatterData(selectedYear, selectedPollutantId, selectedGroupIds);
-    if (dataPoints.length >= 2) {
-      const group1 = dataPoints[0];
-      const group2 = dataPoints[1];
+  const dataPoints = window.supabaseModule.getScatterData(selectedYear, selectedPollutantId, selectedGroupIds);
+  if (dataPoints.length >= 2) {
+    const group1 = dataPoints[0];
+    const group2 = dataPoints[1];
 
-      const higherPolluter = group1.pollutantValue > group2.pollutantValue ? group1 : group2;
-      const lowerPolluter = group1.pollutantValue > group2.pollutantValue ? group2 : group1;
+    const higherPolluter = group1.pollutantValue > group2.pollutantValue ? group1 : group2;
+    const lowerPolluter = group1.pollutantValue > group2.pollutantValue ? group2 : group1;
 
-      const pollutionRatio = lowerPolluter.pollutantValue !== 0 ? higherPolluter.pollutantValue / lowerPolluter.pollutantValue : Infinity;
-      const heatRatio = higherPolluter.activityData !== 0 ? lowerPolluter.activityData / higherPolluter.activityData : Infinity;
+    const pollutionRatio = lowerPolluter.pollutantValue !== 0 ? higherPolluter.pollutantValue / lowerPolluter.pollutantValue : Infinity;
+    const heatRatio = higherPolluter.activityData !== 0 ? lowerPolluter.activityData / higherPolluter.activityData : Infinity;
 
-      const pollutantName = window.supabaseModule.getPollutantName(selectedPollutantId);
+    const pollutantName = window.supabaseModule.getPollutantName(selectedPollutantId);
 
-      const statement = `${higherPolluter.groupName} emits ${pollutionRatio.toFixed(1)} times more ${pollutantName} pollution than ${lowerPolluter.groupName}. ${lowerPolluter.groupName} provides ${heatRatio.toFixed(1)} times more heat.`;
-      window.ChartRenderer.updateComparisonStatement(statement);
-    } else {
-      window.ChartRenderer.updateComparisonStatement("Select two groups to see a comparison.");
-    }
+    const statement = `${higherPolluter.groupName} emits ${pollutionRatio.toFixed(1)} times more ${pollutantName} pollution than ${lowerPolluter.groupName}. ${lowerPolluter.groupName} provides ${heatRatio.toFixed(1)} times more heat.`;
+    updateComparisonStatement(statement);
+  } else {
+    updateComparisonStatement("Select two groups to see a comparison.");
   }
   
   // Update URL
   updateURL();
+}
+
+function ensureComparisonDivExists() {
+  let comparisonContainer = document.getElementById('comparisonContainer');
+  if (!comparisonContainer) {
+    comparisonContainer = document.createElement('div');
+    comparisonContainer.id = 'comparisonContainer';
+    comparisonContainer.style.textAlign = 'center';
+    comparisonContainer.style.marginTop = '10px';
+    
+    const customLegend = document.getElementById('customLegend');
+    if (customLegend) {
+      customLegend.parentNode.insertBefore(comparisonContainer, customLegend.nextSibling);
+    } else {
+      console.error('customLegend element not found. Cannot append comparisonContainer.');
+    }
+  }
+
+  let comparisonDiv = document.getElementById('comparisonDiv');
+  if (!comparisonDiv) {
+    comparisonDiv = document.createElement('div');
+    comparisonDiv.id = 'comparisonDiv';
+    comparisonDiv.className = 'comparison-statement';
+    comparisonContainer.appendChild(comparisonDiv);
+  }
+  
+  return comparisonDiv;
+}
+
+function updateComparisonStatement(statement) {
+  const comparisonDiv = ensureComparisonDivExists();
+  if (comparisonDiv) {
+    comparisonDiv.textContent = statement;
+
+    // Apply pill styling
+    comparisonDiv.style.display = 'inline-block';
+    comparisonDiv.style.padding = '10px 20px';
+    comparisonDiv.style.borderRadius = '20px';
+    comparisonDiv.style.backgroundColor = 'orange';
+    comparisonDiv.style.color = 'white';
+    comparisonDiv.style.fontWeight = 'bold';
+    comparisonDiv.style.textAlign = 'center';
+    comparisonDiv.style.marginTop = '10px';
+  }
 }
 
 /**
