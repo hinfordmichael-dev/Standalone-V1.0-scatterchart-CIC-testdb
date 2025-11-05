@@ -735,7 +735,7 @@ function ensureComparisonDivExists() {
     comparisonContainer = document.createElement('div');
     comparisonContainer.id = 'comparisonContainer';
     comparisonContainer.style.textAlign = 'center';
-    comparisonContainer.style.marginTop = '10px';
+    comparisonContainer.style.marginTop = '2px';
     
     const customLegend = document.getElementById('customLegend');
     if (customLegend) {
@@ -769,7 +769,7 @@ function updateComparisonStatement(statement) {
     comparisonDiv.style.color = 'white';
     comparisonDiv.style.fontWeight = 'bold';
     comparisonDiv.style.textAlign = 'center';
-    comparisonDiv.style.marginTop = '10px';
+    comparisonDiv.style.marginTop = '2px';
   }
 }
 
